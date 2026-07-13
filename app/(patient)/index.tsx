@@ -31,11 +31,7 @@ export default function PatientDashboardScreen() {
                 <Text className="text-2xl font-bold text-primary">2</Text>
                 <Text className="text-xs text-muted">Appointments</Text>
               </View>
-              <View className="flex-1 bg-surface rounded-lg p-4 border border-border">
-                <Text className="text-sm text-muted mb-1">Wallet</Text>
-                <Text className="text-2xl font-bold text-secondary">₹500</Text>
-                <Text className="text-xs text-muted">Balance</Text>
-              </View>
+
             </View>
           </View>
 

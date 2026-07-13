@@ -11,7 +11,7 @@ export default function AdminLayout() {
       <Stack.Screen name="users" />
       <Stack.Screen name="professionals" />
       <Stack.Screen name="bookings" />
-      <Stack.Screen name="payments" />
+
       <Stack.Screen name="reports" />
       <Stack.Screen name="verification" />
     </Stack>

@@ -108,19 +108,7 @@ export default function AdminDashboardScreen() {
             >
               <Text className="text-primary font-semibold">Bookings</Text>
             </Pressable>
-            <Pressable
-              onPress={() => handleNavigate('payments')}
-              style={({ pressed }) => [{
-                backgroundColor: colors.surface,
-                borderColor: colors.border,
-                borderWidth: 1,
-                borderRadius: 8,
-                padding: 12,
-                opacity: pressed ? 0.9 : 1,
-              }]}
-            >
-              <Text className="text-primary font-semibold">Payments</Text>
-            </Pressable>
+
             <Pressable
               onPress={() => handleNavigate('reports')}
               style={({ pressed }) => [{

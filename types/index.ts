@@ -26,7 +26,6 @@ export interface Patient extends User {
     phone: string;
     relation: string;
   };
-  walletBalance: number;
 }
 
 export interface Professional extends User {
@@ -56,7 +55,6 @@ export interface Professional extends User {
   verificationDate?: Date;
   documents: ProfessionalDocument[];
   availability: AvailabilitySlot[];
-  earnings: number;
 }
 
 export interface Admin extends User {
@@ -104,15 +102,12 @@ export interface Booking {
     };
   };
   amount: number;
-  paymentId?: string;
-  paymentStatus: 'pending' | 'completed' | 'failed' | 'refunded';
   prescription?: string;
   medicalRecords?: string[];
   rating?: number;
   review?: string;
   cancelledBy?: 'patient' | 'professional';
   cancellationReason?: string;
-  refundAmount?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -151,69 +146,14 @@ export interface Medicine {
   instructions?: string;
 }
 
-// Payments
-export interface Payment {
-  id: string;
-  bookingId: string;
-  patientId: string;
-  professionalId: string;
-  amount: number;
-  paymentMethod: 'razorpay' | 'wallet' | 'card';
-  razorpayOrderId?: string;
-  razorpayPaymentId?: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
-  commission: number;
-  professionalAmount: number;
-  transactionDate: Date;
-  invoiceUrl?: string;
-  refundAmount?: number;
-  refundDate?: Date;
-  refundReason?: string;
-}
-
-export interface Invoice {
-  id: string;
-  paymentId: string;
-  invoiceNumber: string;
-  patientName: string;
-  professionalName: string;
-  bookingDetails: string;
-  amount: number;
-  tax?: number;
-  totalAmount: number;
-  issueDate: Date;
-  dueDate?: Date;
-  pdfUrl?: string;
-}
-
-// Wallet
-export interface Wallet {
-  id: string;
-  userId: string;
-  balance: number;
-  transactions: WalletTransaction[];
-}
-
-export interface WalletTransaction {
-  id: string;
-  walletId: string;
-  type: 'credit' | 'debit';
-  amount: number;
-  description: string;
-  relatedBookingId?: string;
-  transactionDate: Date;
-}
-
 // Notifications
 export type NotificationType =
   | 'booking_confirmed'
   | 'booking_cancelled'
-  | 'payment_received'
   | 'prescription_ready'
   | 'appointment_reminder'
   | 'professional_verified'
   | 'review_received'
-  | 'earnings_credited'
   | 'document_expiry_warning';
 
 export interface Notification {
@@ -284,8 +224,6 @@ export interface ServiceBooking {
   type: ServiceType;
   scheduledDate: Date;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
-  amount: number;
-  paymentStatus: 'pending' | 'completed' | 'refunded';
   notes?: string;
   createdAt: Date;
 }
@@ -304,7 +242,7 @@ export interface VerificationQueue {
 
 export interface AdminReport {
   id: string;
-  type: 'revenue' | 'users' | 'bookings' | 'professionals' | 'services';
+  type: 'users' | 'bookings' | 'professionals' | 'services';
   startDate: Date;
   endDate: Date;
   data: Record<string, any>;
@@ -350,14 +288,12 @@ export interface PatientTabsParamList {
   Dashboard: undefined;
   Appointments: undefined;
   Records: undefined;
-  Wallet: undefined;
   Profile: undefined;
 }
 
 export interface ProfessionalTabsParamList {
   Dashboard: undefined;
   Bookings: undefined;
-  Earnings: undefined;
   Documents: undefined;
   Profile: undefined;
 }
@@ -367,7 +303,6 @@ export interface AdminTabsParamList {
   Users: undefined;
   Professionals: undefined;
   Bookings: undefined;
-  Payments: undefined;
   Reports: undefined;
   Verification: undefined;
 }

@@ -49,13 +49,6 @@ export default function PatientLayout() {
         }}
       />
       <Tabs.Screen
-        name="wallet"
-        options={{
-          title: 'Wallet',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="wallet.pass" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
