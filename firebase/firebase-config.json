@@ -1,0 +1,10 @@
+{
+  "projectId": "drxvisit-prod",
+  "apiKey": "YOUR_API_KEY",
+  "authDomain": "drxvisit-prod.firebaseapp.com",
+  "databaseURL": "https://drxvisit-prod.firebaseio.com",
+  "storageBucket": "drxvisit-prod.appspot.com",
+  "messagingSenderId": "YOUR_MESSAGING_SENDER_ID",
+  "appId": "YOUR_APP_ID",
+  "measurementId": "YOUR_MEASUREMENT_ID"
+}
