@@ -1,15 +1,15 @@
 /** @type {const} */
 const themeColors = {
-  primary: { light: '#0057B8', dark: '#0057B8' }, // DrxVisit Primary Blue
-  secondary: { light: '#00B140', dark: '#00B140' }, // Healthcare Green
-  background: { light: '#F8F9FA', dark: '#0F0F0F' },
-  surface: { light: '#FFFFFF', dark: '#1E1E1E' },
-  foreground: { light: '#1A1A1A', dark: '#F5F5F5' },
-  muted: { light: '#666666', dark: '#999999' },
-  border: { light: '#E0E0E0', dark: '#333333' },
-  success: { light: '#00B140', dark: '#00B140' },
-  warning: { light: '#FF9500', dark: '#FF9500' },
-  error: { light: '#FF3B30', dark: '#FF3B30' },
+  primary: { light: '#0057B8', dark: '#0057B8' },
+  secondary: { light: '#00B140', dark: '#00B140' },
+  background: { light: '#ffffff', dark: '#0f1419' },
+  surface: { light: '#f8f9fa', dark: '#1a1f26' },
+  foreground: { light: '#11181C', dark: '#ECEDEE' },
+  muted: { light: '#687076', dark: '#9BA1A6' },
+  border: { light: '#E5E7EB', dark: '#334155' },
+  success: { light: '#00B140', dark: '#4ADE80' },
+  warning: { light: '#F59E0B', dark: '#FBBF24' },
+  error: { light: '#EF4444', dark: '#F87171' },
 };
 
 module.exports = { themeColors };

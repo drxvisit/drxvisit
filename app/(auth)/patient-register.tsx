@@ -1,213 +1,298 @@
-import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Pressable, ScrollView, ActivityIndicator, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ScreenContainer } from '@/components/screen-container';
 import { useColors } from '@/hooks/use-colors';
 import { useAuth } from '@/lib/auth-context';
 import { useState } from 'react';
 import * as Haptics from 'expo-haptics';
+import { validateEmail, validatePassword, validatePhone, validateName } from '@/lib/utils/validation';
 
 export default function PatientRegisterScreen() {
   const router = useRouter();
   const colors = useColors();
   const { register } = useAuth();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleRegister = async () => {
-    if (!name || !email || !phone || !password || !confirmPassword) {
+    setError('');
+
+    // Validation
+    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim() || !formData.password.trim()) {
       setError('Please fill in all fields');
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (!validateName(formData.name)) {
+      setError('Name must be between 2 and 100 characters');
+      return;
+    }
+
+    if (!validateEmail(formData.email)) {
+      setError('Please enter a valid email');
+      return;
+    }
+
+    if (!validatePhone(formData.phone)) {
+      setError('Please enter a valid 10-digit phone number');
+      return;
+    }
+
+    if (!validatePassword(formData.password)) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
 
-    setIsLoading(true);
-    setError('');
+    setLoading(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
     try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      await register({
-        name,
-        email,
-        phone,
-        role: 'patient',
-      });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      router.replace('../(patient)');
-    } catch (err) {
+      await register(formData.email, formData.password, formData.name, formData.phone, 'patient');
+      router.replace('/(patient)');
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Please try again.');
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      setError('Registration failed. Please try again.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
     <ScreenContainer className="p-4">
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
-        <View className="flex-1 justify-between py-8">
+        <View className="gap-6 py-4">
+          {/* Falco Mascot */}
+          <View className="items-center">
+            <Image
+              source={require('@/assets/images/falco-welcome.png')}
+              style={{ width: 100, height: 100 }}
+              resizeMode="contain"
+            />
+          </View>
+
           {/* Header */}
-          <View className="items-center gap-2 mb-8">
-            <Text className="text-4xl font-bold text-primary">Create Account</Text>
+          <View className="gap-2 items-center">
+            <Text className="text-3xl font-bold text-primary">Create Account</Text>
             <Text className="text-base text-muted text-center">Join DrxVisit as a patient</Text>
           </View>
+
+          {/* Error Message */}
+          {error ? (
+            <View
+              style={{
+                backgroundColor: colors.error + '20',
+                borderColor: colors.error,
+                borderWidth: 1,
+                borderRadius: 8,
+                padding: 12,
+              }}
+            >
+              <Text className="text-sm text-error">{error}</Text>
+            </View>
+          ) : null}
 
           {/* Form */}
           <View className="gap-4">
             {/* Name Input */}
             <View className="gap-2">
               <Text className="text-sm font-semibold text-foreground">Full Name</Text>
-              <TextInput
-                placeholder="John Doe"
-                placeholderTextColor={colors.muted}
-                value={name}
-                onChangeText={setName}
-                editable={!isLoading}
+              <View
                 style={{
                   borderWidth: 1,
                   borderColor: colors.border,
                   borderRadius: 8,
-                  padding: 12,
-                  fontSize: 16,
-                  color: colors.foreground,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
                   backgroundColor: colors.surface,
                 }}
-              />
+              >
+                <TextInput
+                  placeholder="Your full name"
+                  value={formData.name}
+                  onChangeText={(text) => setFormData({ ...formData, name: text })}
+                  editable={!loading}
+                  style={{
+                    color: colors.foreground,
+                    fontSize: 16,
+                  }}
+                  placeholderTextColor={colors.muted}
+                />
+              </View>
             </View>
 
             {/* Email Input */}
             <View className="gap-2">
               <Text className="text-sm font-semibold text-foreground">Email Address</Text>
-              <TextInput
-                placeholder="you@example.com"
-                placeholderTextColor={colors.muted}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                editable={!isLoading}
+              <View
                 style={{
                   borderWidth: 1,
                   borderColor: colors.border,
                   borderRadius: 8,
-                  padding: 12,
-                  fontSize: 16,
-                  color: colors.foreground,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
                   backgroundColor: colors.surface,
                 }}
-              />
+              >
+                <TextInput
+                  placeholder="your@email.com"
+                  value={formData.email}
+                  onChangeText={(text) => setFormData({ ...formData, email: text })}
+                  editable={!loading}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  style={{
+                    color: colors.foreground,
+                    fontSize: 16,
+                  }}
+                  placeholderTextColor={colors.muted}
+                />
+              </View>
             </View>
 
             {/* Phone Input */}
             <View className="gap-2">
               <Text className="text-sm font-semibold text-foreground">Phone Number</Text>
-              <TextInput
-                placeholder="+91 98765 43210"
-                placeholderTextColor={colors.muted}
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-                editable={!isLoading}
+              <View
                 style={{
                   borderWidth: 1,
                   borderColor: colors.border,
                   borderRadius: 8,
-                  padding: 12,
-                  fontSize: 16,
-                  color: colors.foreground,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
                   backgroundColor: colors.surface,
                 }}
-              />
+              >
+                <TextInput
+                  placeholder="10-digit phone number"
+                  value={formData.phone}
+                  onChangeText={(text) => setFormData({ ...formData, phone: text.replace(/\D/g, '').slice(0, 10) })}
+                  editable={!loading}
+                  keyboardType="phone-pad"
+                  maxLength={10}
+                  style={{
+                    color: colors.foreground,
+                    fontSize: 16,
+                  }}
+                  placeholderTextColor={colors.muted}
+                />
+              </View>
             </View>
 
             {/* Password Input */}
             <View className="gap-2">
               <Text className="text-sm font-semibold text-foreground">Password</Text>
-              <TextInput
-                placeholder="••••••••"
-                placeholderTextColor={colors.muted}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                editable={!isLoading}
+              <View
                 style={{
                   borderWidth: 1,
                   borderColor: colors.border,
                   borderRadius: 8,
-                  padding: 12,
-                  fontSize: 16,
-                  color: colors.foreground,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
                   backgroundColor: colors.surface,
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 }}
-              />
+              >
+                <TextInput
+                  placeholder="At least 8 characters"
+                  value={formData.password}
+                  onChangeText={(text) => setFormData({ ...formData, password: text })}
+                  editable={!loading}
+                  secureTextEntry={!showPassword}
+                  style={{
+                    color: colors.foreground,
+                    fontSize: 16,
+                    flex: 1,
+                  }}
+                  placeholderTextColor={colors.muted}
+                />
+                <Pressable
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={{ padding: 8 }}
+                >
+                  <Text className="text-primary text-lg">{showPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                </Pressable>
+              </View>
             </View>
 
             {/* Confirm Password Input */}
             <View className="gap-2">
               <Text className="text-sm font-semibold text-foreground">Confirm Password</Text>
-              <TextInput
-                placeholder="••••••••"
-                placeholderTextColor={colors.muted}
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry
-                editable={!isLoading}
+              <View
                 style={{
                   borderWidth: 1,
                   borderColor: colors.border,
                   borderRadius: 8,
-                  padding: 12,
-                  fontSize: 16,
-                  color: colors.foreground,
+                  paddingHorizontal: 12,
+                  paddingVertical: 12,
                   backgroundColor: colors.surface,
+                  flexDirection: 'row',
+                  alignItems: 'center',
                 }}
-              />
-            </View>
-
-            {/* Error Message */}
-            {error ? (
-              <View className="bg-error/10 border border-error rounded-lg p-3">
-                <Text className="text-error text-sm">{error}</Text>
+              >
+                <TextInput
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
+                  editable={!loading}
+                  secureTextEntry={!showConfirmPassword}
+                  style={{
+                    color: colors.foreground,
+                    fontSize: 16,
+                    flex: 1,
+                  }}
+                  placeholderTextColor={colors.muted}
+                />
+                <Pressable
+                  onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ padding: 8 }}
+                >
+                  <Text className="text-primary text-lg">{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                </Pressable>
               </View>
-            ) : null}
+            </View>
+          </View>
 
-            {/* Register Button */}
-            <Pressable
-              onPress={handleRegister}
-              disabled={isLoading}
-              style={({ pressed }) => [{
+          {/* Register Button */}
+          <Pressable
+            onPress={handleRegister}
+            disabled={loading}
+            style={({ pressed }) => [
+              {
                 backgroundColor: colors.primary,
                 borderRadius: 8,
                 padding: 14,
-                alignItems: 'center',
-                opacity: isLoading ? 0.6 : pressed ? 0.9 : 1,
-                transform: [{ scale: pressed && !isLoading ? 0.97 : 1 }],
-              }]}
-            >
-              {isLoading ? (
-                <ActivityIndicator color="white" />
-              ) : (
-                <Text className="text-white font-bold text-base">Create Account</Text>
-              )}
-            </Pressable>
-          </View>
+                opacity: pressed || loading ? 0.8 : 1,
+                transform: [{ scale: pressed || loading ? 0.97 : 1 }],
+              },
+            ]}
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text className="text-white font-bold text-center text-lg">Create Account</Text>
+            )}
+          </Pressable>
 
-          {/* Footer */}
-          <View className="items-center gap-2">
-            <Text className="text-sm text-muted">Already have an account?</Text>
-            <Pressable
-              onPress={() => router.push('./patient-login')}
-              disabled={isLoading}
-            >
-              <Text className="text-primary font-semibold">Sign In</Text>
+          {/* Sign In Link */}
+          <View className="flex-row justify-center gap-1">
+            <Text className="text-base text-muted">Already have an account?</Text>
+            <Pressable onPress={() => router.push('/(auth)/patient-login')}>
+              <Text className="text-base text-primary font-semibold">Sign In</Text>
             </Pressable>
           </View>
         </View>
