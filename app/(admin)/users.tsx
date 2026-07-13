@@ -1,30 +1,18 @@
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { ScreenContainer } from '@/components/screen-container';
+import { useColors } from '@/hooks/use-colors';
 
-const mockUsers = [
-  { id: '1', name: 'John Doe', email: 'john@example.com', role: 'patient' },
-  { id: '2', name: 'Jane Smith', email: 'jane@example.com', role: 'patient' },
-  { id: '3', name: 'Dr. Kumar', email: 'kumar@example.com', role: 'professional' },
-];
+export default function AdminScreen() {
+  const colors = useColors();
 
-export default function UsersScreen() {
   return (
     <ScreenContainer className="p-4">
-      <View className="gap-4">
-        <Text className="text-2xl font-bold text-foreground">Users Management</Text>
-        <FlatList
-          data={mockUsers}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View className="bg-surface rounded-lg p-4 border border-border mb-3">
-              <Text className="text-lg font-semibold text-foreground">{item.name}</Text>
-              <Text className="text-sm text-muted">{item.email}</Text>
-              <Text className="text-xs text-primary mt-1">{item.role}</Text>
-            </View>
-          )}
-          scrollEnabled={false}
-        />
-      </View>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <View className="gap-4 flex-1 justify-center items-center">
+          <Text className="text-3xl font-bold text-primary">Users</Text>
+          <Text className="text-base text-muted text-center">This feature will be available soon</Text>
+        </View>
+      </ScrollView>
     </ScreenContainer>
   );
 }

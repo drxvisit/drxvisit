@@ -1,12 +1,18 @@
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { ScreenContainer } from '@/components/screen-container';
+import { useColors } from '@/hooks/use-colors';
 
-export default function BookingsScreen() {
+export default function AdminScreen() {
+  const colors = useColors();
+
   return (
     <ScreenContainer className="p-4">
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-2xl font-bold text-foreground">Bookings Management</Text>
-      </View>
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false}>
+        <View className="gap-4 flex-1 justify-center items-center">
+          <Text className="text-3xl font-bold text-primary">Bookings</Text>
+          <Text className="text-base text-muted text-center">This feature will be available soon</Text>
+        </View>
+      </ScrollView>
     </ScreenContainer>
   );
 }
